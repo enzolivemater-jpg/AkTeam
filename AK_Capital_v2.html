@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AK Capital">
+<meta name="theme-color" content="#07090f">
+<meta name="mobile-web-app-capable" content="yes">
+<title>AK Capital</title>
+
+<!-- PWA ICON: AK monogram sophistiqué -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%2307090f'/%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='20' y1='20' x2='160' y2='160' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%234f8ef7'/%3E%3Cstop offset='1' stop-color='%237c6af7'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='20' y1='160' x2='160' y2='20' gradientUnits='userSpaceOnUse'%3E%3Cstop offset='0' stop-color='%231fc87a'/%3E%3Cstop offset='1' stop-color='%234f8ef7'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='90' cy='90' r='72' stroke='url(%23g1)' stroke-width='1.5' fill='none' opacity='.15'/%3E%3Cpath d='M56 130 L90 42 L124 130' stroke='url(%23g1)' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M66 108 L114 108' stroke='url(%23g1)' stroke-width='7' stroke-linecap='round'/%3E%3Cpath d='M108 42 L108 130' stroke='url(%23g2)' stroke-width='7' fill='none' stroke-linecap='round'/%3E%3Cpath d='M108 88 L136 42' stroke='url(%23g2)' stroke-width='7' fill='none' stroke-linecap='round'/%3E%3Cpath d='M108 88 L136 130' stroke='url(%23g2)' stroke-width='7' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='136' cy='130' r='9' fill='%231fc87a'/%3E%3C/svg%3E">
+
+<style>
+:root{
+  --bg:#07090f;--s1:#0d1019;--s2:#141a26;--s3:#1c2438;
+  --b1:rgba(255,255,255,0.06);--b2:rgba(255,255,255,0.11);
+  --t1:#eceef8;--t2:#8892b0;--t3:#404868;
+  --acc:#4f8ef7;--g:#1fc87a;--g2:rgba(31,200,122,0.12);
+  --r:#f0505a;--r2:rgba(240,80,90,0.12);
+  --a:#f5a623;--a2:rgba(245,166,35,0.11);
+  --pu:#7c6af7;
+  --nav:64px;--top:58px;
+  --safe-b:env(safe-area-inset-bottom,12px);
+  --safe-t:env(safe-area-inset-top,44px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t1);font-family:-apple-system,'SF Pro Text','Inter',sans-serif}
+button{border:none;background:none;color:inherit;cursor:pointer;font:inherit}
+
+/* ─── TOPBAR ─── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;
+  padding-top:var(--safe-t);
+  background:rgba(7,9,15,.96);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--b1);z-index:100;
+}
+.topbar-inner{height:var(--top);display:flex;align-items:center;padding:0 16px;gap:10px}
+.logo{display:flex;align-items:center;gap:9px}
+
+/* AK ICON SVG dans le header */
+.logo-svg-wrap{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--s2);border:1px solid var(--b2);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.logo-svg-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 70% 30%, rgba(79,142,247,.15), transparent 60%);
+}
+.logo-glow{
+  position:absolute;bottom:3px;right:3px;
+  width:5px;height:5px;border-radius:50%;
+  background:var(--g);
+  box-shadow:0 0 6px var(--g),0 0 12px rgba(31,200,122,.4);
+  animation:glow 3s ease infinite;
+}
+@keyframes glow{0%,100%{opacity:1;box-shadow:0 0 5px var(--g)}50%{opacity:.5;box-shadow:0 0 12px var(--g)}}
+
+.logo-txt{font-size:16px;font-weight:800;letter-spacing:.02em;color:var(--t1)}
+.logo-tag{font-size:9px;color:var(--t3);margin-top:1px;font-weight:500;letter-spacing:.04em;text-transform:uppercase}
+.top-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end}
+.top-total{font-size:17px;font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.top-sub{font-size:10px;color:var(--t3);margin-top:1px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--g);animation:pulse 2s infinite;display:inline-block;margin-right:3px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ─── PAGES ─── */
+.pages{
+  position:fixed;left:0;right:0;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  top:calc(var(--safe-t) + var(--top));
+  bottom:calc(var(--nav) + var(--safe-b));
+}
+.page{display:none;padding:14px 14px 24px;animation:pi .18s ease}
+.page.active{display:block}
+@keyframes pi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.page#pg-ai{padding:0;display:flex;flex-direction:column;height:100%}
+.page#pg-ai.active{display:flex}
+
+/* ─── BOTTOM NAV ─── */
+.botnav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:calc(var(--nav) + var(--safe-b));
+  background:rgba(7,9,15,.97);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-top:1px solid var(--b1);
+  display:flex;align-items:flex-start;padding-top:10px;
+  z-index:100;
+}
+.nbtn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;
+  font-weight:600;transition:color .15s;position:relative;
+}
+.nbtn.active{color:var(--acc)}
+.nbtn.active .ni{filter:drop-shadow(0 0 6px rgba(79,142,247,.5))}
+.ni{font-size:21px;line-height:1}
+.news-badge{
+  position:absolute;top:0;right:calc(50% - 19px);
+  min-width:14px;height:14px;padding:0 3px;border-radius:7px;
+  background:var(--r);color:#fff;font-size:8px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* ─── CARDS & METRICS ─── */
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.ct{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:10px}
+.ctr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.ctr .ct{margin-bottom:0}
+.mgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.mgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.mc{background:var(--s2);border-radius:12px;padding:12px 14px}
+.ml{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.mv{font-size:20px;font-weight:700;line-height:1}
+.ms{font-size:10px;color:var(--t3);margin-top:3px}
+.pos{color:var(--g)}.neg{color:var(--r)}.amb{color:var(--a)}.neu{color:var(--t3)}
+.sh{font-size:17px;font-weight:700;color:var(--t1);margin-bottom:14px}
+.sh-sub{font-size:11px;color:var(--t3);font-weight:400;margin-left:6px}
+.divider{height:1px;background:var(--b1);margin:12px 0}
+.label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);margin-bottom:8px}
+
+/* ─── ALLOC BAR ─── */
+.alloc-wrap{height:8px;border-radius:4px;overflow:hidden;display:flex;gap:1px;margin-bottom:8px}
+.alloc-seg{height:100%;border-radius:2px}
+.alloc-legend{display:flex;flex-wrap:wrap;gap:8px}
+.alloc-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)}
+.alloc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ─── POSITIONS ─── */
+.pcard{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:13px 15px;margin-bottom:9px;display:flex;align-items:center;gap:12px}
+.pcard-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;font-family:'SF Mono','Courier New',monospace;letter-spacing:-.5px}
+.pcard-info{flex:1;min-width:0}
+.pcard-name{font-size:13px;font-weight:600;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard-sec{font-size:10px;color:var(--t3);margin-top:1px}
+.pcard-right{text-align:right;flex-shrink:0}
+.pcard-val{font-size:15px;font-weight:700;color:var(--t1);font-variant-numeric:tabular-nums}
+.pcard-pnl{font-size:11px;font-weight:600;margin-top:2px;font-variant-numeric:tabular-nums}
+.pcard-bar{height:3px;background:var(--s2);border-radius:2px;margin-top:8px;overflow:hidden}
+.pcard-bar-fill{height:100%;border-radius:2px;transition:width .5s}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--b1);font-size:12px}
+.sum-row:last-child{border-bottom:none;font-weight:700;font-size:13px;padding-top:10px}
+.sum-label{color:var(--t2)}.sum-val{color:var(--t1)}
+
+/* ─── PROJECTION ─── */
+.ptab{font-size:11px;padding:6px 14px;border-radius:20px;border:1px solid var(--b1);color:var(--t3);transition:all .15s}
+.ptab.active{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:600}
+.milestone{background:var(--s2);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.ms-year{font-size:9px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.ms-vals{display:flex;justify-content:space-between;align-items:baseline}
+.ms-base{font-size:16px;font-weight:700;color:var(--t1)}
+.ms-range{font-size:10px;color:var(--g)}
+input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:var(--s3);outline:none;cursor:pointer;accent-color:var(--acc)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--acc);cursor:pointer;border:2.5px solid var(--bg);box-shadow:0 0 8px rgba(79,142,247,.5)}
+
+/* ─── NEWS & EVENTS ─── */
+.event-card{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:13px 15px;margin-bottom:10px}
+.event-head{display:flex;gap:11px;align-items:flex-start;margin-bottom:8px}
+.event-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ev-g{background:var(--g2)}.ev-r{background:var(--r2)}.ev-a{background:var(--a2)}.ev-b{background:rgba(124,106,247,.14)}
+.event-title{font-size:13px;font-weight:600;color:var(--t1);line-height:1.3}
+.event-tickers{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0}
+.ev-tkr{font-family:'SF Mono','Courier New',monospace;font-size:10px;font-weight:700;color:var(--acc);background:var(--s2);padding:2px 7px;border-radius:5px}
+.event-body{font-size:11px;color:var(--t2);line-height:1.55;margin-top:6px}
+.event-foot{display:flex;justify-content:space-between;align-items:center;margin-top:11px;padding-top:11px;border-top:1px solid var(--b1)}
+.imp-badge{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:4px 9px;border-radius:20px}
+.imp-dots{display:flex;gap:2px}.imp-dot{width:5px;height:5px;border-radius:50%}
+.cd{display:flex;gap:5px;align-items:center}
+.cd-seg{display:flex;flex-direction:column;align-items:center;min-width:24px}
+.cd-n{font-size:15px;font-weight:700;color:var(--acc);font-family:'SF Mono','Courier New',monospace;line-height:1}
+.cd-l{font-size:7px;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+.cd-sep{font-size:13px;color:var(--t3);padding-bottom:9px}
+.news-item{display:flex;gap:11px;background:var(--s1);border:1px solid var(--b1);border-radius:12px;padding:12px 14px;margin-bottom:9px}
+.news-impact-bar{width:3px;border-radius:2px;flex-shrink:0}
+.news-content{flex:1;min-width:0}
+.news-title{font-size:12px;font-weight:600;color:var(--t1);line-height:1.4;margin-bottom:4px}
+.news-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.news-time{font-size:10px;color:var(--t3)}
+.news-tkr{font-family:'SF Mono','Courier New',monospace;font-size:10px;font-weight:600;color:var(--acc)}
+.news-tag{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600}
+
+/* ─── CHAT ─── */
+.chat-wrap{display:flex;flex-direction:column;flex:1;min-height:0}
+.chat-msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px;display:flex;flex-direction:column;gap:12px}
+.cmsg{display:flex;gap:8px}.cmsg.user{align-self:flex-end;flex-direction:row-reverse}
+.av{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0}
+.av-ai{background:linear-gradient(135deg,#4f8ef7,#7c6af7);color:#fff}.av-u{background:var(--s3);color:var(--t2)}
+.bubble{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:10px 13px;font-size:12px;line-height:1.65;color:var(--t2);max-width:calc(100% - 38px)}
+.bubble.user{background:var(--s2)}.bubble strong{color:var(--t1);font-weight:600}
+.bubble .hi-g{color:var(--g);font-weight:600}.bubble .hi-r{color:var(--r);font-weight:600}.bubble .hi-a{color:var(--a);font-weight:600}
+.typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+.typing span{width:5px;height:5px;border-radius:50%;background:var(--t3);animation:bc .9s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bc{0%,60%,100%{transform:none}30%{transform:translateY(-5px)}}
+.chat-foot{padding:10px 14px;border-top:1px solid var(--b1);background:rgba(7,9,15,.97);flex-shrink:0}
+.qps{display:flex;gap:6px;overflow-x:auto;margin-bottom:9px;scrollbar-width:none}
+.qps::-webkit-scrollbar{display:none}
+.qp{font-size:11px;background:var(--s2);border:1px solid var(--b1);color:var(--t2);padding:6px 12px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.qp:active{border-color:var(--acc);color:var(--acc)}
+.chat-inp-row{display:flex;gap:8px;align-items:flex-end}
+.chat-inp{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:20px;padding:10px 16px;font-size:13px;color:var(--t1);resize:none;min-height:42px;max-height:100px;font-family:inherit;outline:none}
+.chat-inp:focus{border-color:var(--acc)}
+.chat-send{background:var(--acc);color:#fff;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.chat-send:active{opacity:.75}.chat-send:disabled{opacity:.3}
+.chart-svg{width:100%;overflow:visible}
+.chart-axis{font-size:9px;fill:var(--t3);font-family:-apple-system,sans-serif}
+.chart-line{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.chart-area{opacity:.15}
+.chart-grid{stroke:rgba(255,255,255,0.04);stroke-width:1}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash" style="position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+  <!-- AK LOGO grand format splash -->
+  <svg width="90" height="90" viewBox="0 0 90 90" fill="none" style="filter:drop-shadow(0 0 20px rgba(79,142,247,0.4));animation:splashPulse 2s ease infinite">
+    <defs>
+      <linearGradient id="sp1" x1="10" y1="10" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#4f8ef7"/>
+        <stop offset="1" stop-color="#7c6af7"/>
+      </linearGradient>
+      <linearGradient id="sp2" x1="10" y1="80" x2="80" y2="10" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#1fc87a"/>
+        <stop offset="1" stop-color="#4f8ef7"/>
+      </linearGradient>
+    </defs>
+    <!-- Cercle décoratif externe -->
+    <circle cx="45" cy="45" r="42" stroke="rgba(79,142,247,0.15)" stroke-width="1" fill="none"/>
+    <circle cx="45" cy="45" r="35" stroke="rgba(79,142,247,0.08)" stroke-width="1" fill="none"/>
+    <!-- A : trait gauche montant vers le centre -->
+    <path d="M18 70 L45 14 L72 70" stroke="url(#sp1)" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- A : barre horizontale -->
+    <path d="M27 52 L63 52" stroke="url(#sp1)" stroke-width="5.5" stroke-linecap="round"/>
+    <!-- K : barre verticale -->
+    <path d="M58 14 L58 70" stroke="url(#sp2)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <!-- K : diagonale haute -->
+    <path d="M58 44 L78 14" stroke="url(#sp2)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <!-- K : diagonale basse -->
+    <path d="M58 44 L78 70" stroke="url(#sp2)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <!-- Point vert en bas du K -->
+    <circle cx="78" cy="70" r="6" fill="#1fc87a"/>
+  </svg>
+  <div style="font-size:22px;font-weight:800;letter-spacing:.04em;color:var(--t1)">AK Capital</div>
+  <div style="font-size:12px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase">Portefeuille personnel</div>
+  <div style="width:120px;height:2px;background:var(--s2);border-radius:1px;overflow:hidden;margin-top:4px">
+    <div style="height:100%;background:linear-gradient(90deg,var(--acc),var(--pu));border-radius:1px;animation:loadBar 1.5s ease forwards"></div>
+  </div>
+</div>
+<style>
+@keyframes splashPulse{0%,100%{filter:drop-shadow(0 0 18px rgba(79,142,247,.35))}50%{filter:drop-shadow(0 0 32px rgba(79,142,247,.65))}}
+@keyframes loadBar{from{width:0}to{width:100%}}
+</style>
+
+<!-- ─── TOPBAR ─── -->
+<header class="topbar">
+<div class="topbar-inner">
+  <div class="logo">
+    <div class="logo-svg-wrap">
+      <!-- AK ICON PETIT FORMAT HEADER -->
+      <svg width="22" height="22" viewBox="0 0 44 44" fill="none">
+        <defs>
+          <linearGradient id="hg1" x1="2" y1="2" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#4f8ef7"/>
+            <stop offset="1" stop-color="#7c6af7"/>
+          </linearGradient>
+          <linearGradient id="hg2" x1="2" y1="42" x2="42" y2="2" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#1fc87a"/>
+            <stop offset="1" stop-color="#4f8ef7"/>
+          </linearGradient>
+        </defs>
+        <!-- A -->
+        <path d="M5 38 L22 5 L39 38" stroke="url(#hg1)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 27 L33 27" stroke="url(#hg1)" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- K -->
+        <path d="M29 5 L29 38" stroke="url(#hg2)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M29 22 L42 5" stroke="url(#hg2)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M29 22 L42 38" stroke="url(#hg2)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- dot -->
+        <circle cx="42" cy="38" r="4" fill="#1fc87a"/>
+      </svg>
+      <div class="logo-glow"></div>
+    </div>
+    <div>
+      <div class="logo-txt">AK Capital</div>
+      <div class="logo-tag"><span class="live-dot"></span>Live · <span id="clock-top"></span></div>
+    </div>
+  </div>
+  <div class="top-right">
+    <div class="top-total" id="total-display">2 792 €</div>
+    <div class="top-sub">ETF 2 000 € + TR 792 €</div>
+  </div>
+</div>
+</header>
+
+<!-- ─── PAGES ─── -->
+<div class="pages" id="pages">
+
+<!-- ═══ ACCUEIL ═══ -->
+<div class="page active" id="pg-home">
+  <div class="mgrid2">
+    <div class="mc">
+      <div class="ml">Trade Republic</div>
+      <div class="mv">792 €</div>
+      <div class="ms neg">Drawdown moyen −5,2 %</div>
+    </div>
+    <div class="mc">
+      <div class="ml">ETF S&amp;P 500</div>
+      <div class="mv pos">2 000 €</div>
+      <div class="ms">Compte séparé · socle</div>
+    </div>
+  </div>
+  <div class="mgrid3">
+    <div class="mc"><div class="ml">Total</div><div class="mv" style="font-size:17px">2 792 €</div></div>
+    <div class="mc"><div class="ml">Positions</div><div class="mv">10</div></div>
+    <div class="mc"><div class="ml">DCA/mois</div><div class="mv amb">400 €</div></div>
+  </div>
+  <div class="card">
+    <div class="ct">Répartition du portefeuille</div>
+    <div class="alloc-wrap" id="alloc-bar"></div>
+    <div class="alloc-legend" id="alloc-legend"></div>
+    <div class="divider"></div>
+    <div class="label">Résumé Trade Republic</div>
+    <div class="sum-row"><span class="sum-label">Valeur totale TR</span><span class="sum-val">792 €</span></div>
+    <div class="sum-row"><span class="sum-label">En profit</span><span class="sum-val pos">3 positions</span></div>
+    <div class="sum-row"><span class="sum-label">En perte</span><span class="sum-val neg">7 positions</span></div>
+    <div class="sum-row"><span class="sum-label">Meilleure</span><span class="sum-val pos">PLTR +3,99 %</span></div>
+    <div class="sum-row"><span class="sum-label">Pire</span><span class="sum-val neg">CRM −17,68 %</span></div>
+  </div>
+  <div class="card">
+    <div class="ctr"><span class="ct">Simulation 12 mois</span></div>
+    <svg class="chart-svg" height="130" id="perf-svg"></svg>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <span class="alloc-item"><span class="alloc-dot" style="background:var(--acc)"></span>Mon portef.</span>
+      <span class="alloc-item"><span class="alloc-dot" style="background:var(--t3)"></span>S&amp;P 500</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ POSITIONS ═══ -->
+<div class="page" id="pg-pos">
+  <div class="sh">Positions<span class="sh-sub">10 titres · 792 €</span></div>
+  <div class="label">Conviction long terme</div>
+  <div id="conviction-cards"></div>
+  <div class="label" style="margin-top:4px">Satellites spéculatifs</div>
+  <div id="spec-cards"></div>
+  <div class="card" style="margin-top:4px">
+    <div class="ct">ETF S&amp;P 500 — Compte séparé</div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--t1)">iShares Core S&amp;P 500</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">Socle long terme · DCA mensuel prioritaire</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:17px;font-weight:700;color:var(--t1)">2 000 €</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px">71,6 % du total</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROJECTION ═══ -->
+<div class="page" id="pg-proj">
+  <div class="sh">Projection<span class="sh-sub">DCA 400 €/mois</span></div>
+  <div style="display:flex;gap:6px;margin-bottom:12px">
+    <button class="ptab active" onclick="setScenario(this,0.10)">Base 10 %</button>
+    <button class="ptab" onclick="setScenario(this,0.14)">Bull 14 %</button>
+    <button class="ptab" onclick="setScenario(this,0.07)">Bear 7 %</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+    <div class="mc">
+      <div class="ml">Capital final</div>
+      <div class="mv pos" id="sum-final" style="font-size:18px">—</div>
+      <div class="ms" id="sum-years">dans 20 ans</div>
+    </div>
+    <div class="mc">
+      <div class="ml">Gains composés</div>
+      <div class="mv" id="sum-gains" style="font-size:18px;color:var(--acc)">—</div>
+      <div class="ms" id="sum-mult">× — l'investi</div>
+    </div>
+  </div>
+  <div class="card" style="padding:14px 12px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span class="ct" style="margin-bottom:0">Capital projeté</span>
+      <div id="tooltip-box" style="text-align:right;min-width:120px">
+        <div id="tt-date" style="font-size:9px;color:var(--t3)">Glisse sur le graphique</div>
+        <div id="tt-val" style="font-size:14px;font-weight:700;color:var(--acc)"></div>
+        <div id="tt-inv" style="font-size:10px;color:var(--t3)"></div>
+      </div>
+    </div>
+    <div style="position:relative;touch-action:none" id="chart-touch-zone">
+      <svg id="proj-svg" width="100%" style="display:block;overflow:visible"></svg>
+      <div id="cursor-line" style="position:absolute;top:0;width:1.5px;background:linear-gradient(var(--acc),rgba(79,142,247,0.1));opacity:0;pointer-events:none;transition:opacity .15s"></div>
+      <div id="cursor-dot" style="position:absolute;width:12px;height:12px;background:var(--acc);border-radius:50%;border:2.5px solid var(--bg);opacity:0;pointer-events:none;transform:translate(-50%,-50%);box-shadow:0 0 10px rgba(79,142,247,0.6),0 0 0 4px rgba(79,142,247,0.15);transition:opacity .15s"></div>
+    </div>
+    <div style="display:flex;gap:14px;margin-top:10px">
+      <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)"><span style="width:10px;height:2px;background:var(--acc);display:inline-block;border-radius:1px"></span>Capital total</span>
+      <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2)"><span style="width:10px;height:2px;background:var(--t3);display:inline-block;border-radius:1px;border-top:1px dashed var(--t3)"></span>Investi</span>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <span class="ct" style="margin-bottom:0">Horizon</span>
+      <span style="font-size:16px;font-weight:700;color:var(--t1)" id="slider-label">20 ans</span>
+    </div>
+    <input type="range" id="horizon-slider" min="1" max="480" value="240" oninput="onSlider(this.value)">
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--t3);margin-top:6px">
+      <span>1 mois</span><span>10 ans</span><span>20 ans</span><span>30 ans</span><span>40 ans</span>
+    </div>
+  </div>
+  <div class="label">Jalons clés</div>
+  <div id="milestones"></div>
+  <div class="card">
+    <div class="ct">Tableau détaillé</div>
+    <div id="proj-table"></div>
+  </div>
+  <div style="font-size:11px;color:var(--t3);line-height:1.6;padding:0 2px 16px">Départ : 2 792 € réels + 400 €/mois. Rendements nets annuels. La composition s'emballe après l'an 12.</div>
+</div>
+
+<!-- ═══ NEWS & EVENTS ═══ -->
+<div class="page" id="pg-news">
+  <div class="sh">Événements<span class="sh-sub">Catalyseurs à venir</span></div>
+  <div class="card" id="next-event-card" style="border:1px solid rgba(79,142,247,0.3)"></div>
+  <div class="label">Calendrier des catalyseurs</div>
+  <div id="events-list"></div>
+  <div class="label" style="margin-top:4px">Actualités marché</div>
+  <div id="news-list"></div>
+</div>
+
+<!-- ═══ ANALYSTE IA ═══ -->
+<div class="page" id="pg-ai">
+  <div class="chat-wrap">
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="cmsg">
+        <div class="av av-ai">AI</div>
+        <div class="bubble">
+          <strong>Bonjour Enzo.</strong><br><br>
+          Portef. total : <span class="hi-g">2 792 €</span>. Trade Republic 792 € sur 10 positions — 7 en perte latente, 3 en profit. ETF S&amp;P 500 à 2 000 € reste le socle solide.<br><br>
+          À 400 €/mois sur 20 ans, scénario base : <span class="hi-g">~330 000 €</span>. Pose ta question.
+        </div>
+      </div>
+    </div>
+    <div class="chat-foot">
+      <div class="qps">
+        <div class="qp" onclick="sq(this)">400 € ce mois, je mets où ?</div>
+        <div class="qp" onclick="sq(this)">ServiceNow à −15 %, je tiens ?</div>
+        <div class="qp" onclick="sq(this)">NVDA ou AVGO en priorité ?</div>
+        <div class="qp" onclick="sq(this)">Mes small caps, je les vends ?</div>
+        <div class="qp" onclick="sq(this)">Dans 20 ans j'ai combien ?</div>
+        <div class="qp" onclick="sq(this)">Palantir à ce niveau, c'est quoi ?</div>
+      </div>
+      <div class="chat-inp-row">
+        <textarea class="chat-inp" id="chat-inp" placeholder="Pose ta question…" rows="1" onkeydown="hk(event)"></textarea>
+        <button class="chat-send" onclick="send()" id="send-btn">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /pages -->
+
+<!-- ─── BOTTOM NAV ─── -->
+<nav class="botnav">
+  <button class="nbtn active" onclick="go('home')" id="nav-home"><span class="ni">🏠</span>Accueil</button>
+  <button class="nbtn" onclick="go('pos')" id="nav-pos"><span class="ni">📊</span>Positions</button>
+  <button class="nbtn" onclick="go('proj')" id="nav-proj"><span class="ni">📈</span>Projection</button>
+  <button class="nbtn" onclick="go('news')" id="nav-news"><span class="ni">⚡</span>News<span class="news-badge" id="news-badge">3</span></button>
+  <button class="nbtn" onclick="go('ai')" id="nav-ai"><span class="ni">🤖</span>Analyste</button>
+</nav>
+
+<script>
+// ══════════════════════════════
+// DATA RÉEL
+// ══════════════════════════════
+const POSITIONS=[
+  {t:'NOW',n:'ServiceNow',val:295.31,pnl:-15.63,sec:'Technologie',type:'conviction',color:'#D97706',dca:50},
+  {t:'CRM',n:'Salesforce',val:123.47,pnl:-17.68,sec:'Technologie',type:'conviction',color:'#E07B39',dca:40},
+  {t:'PLTR',n:'Palantir Technologies',val:114.39,pnl:+3.99,sec:'Technologie',type:'conviction',color:'#8B91A8',dca:0},
+  {t:'NVDA',n:'NVIDIA',val:94.69,pnl:-0.33,sec:'Semiconducteurs',type:'conviction',color:'#7C3AED',dca:90},
+  {t:'AVGO',n:'Broadcom',val:69.56,pnl:-0.63,sec:'Semiconducteurs',type:'conviction',color:'#DC2626',dca:60},
+  {t:'ANNO',n:'Annovis Bio',val:30.40,pnl:-4.04,sec:'Biotech',type:'spec',color:'#374151',dca:0},
+  {t:'MVST',n:'Microvast',val:21.80,pnl:+9.02,sec:'EV / Batteries',type:'spec',color:'#374151',dca:0},
+  {t:'BRTX',n:'BioRestorative Therapies',val:20.50,pnl:+2.50,sec:'Biotech',type:'spec',color:'#374151',dca:0},
+  {t:'AVTX',n:'Avalo Therapeutics',val:12.46,pnl:-1.42,sec:'Biotech',type:'spec',color:'#374151',dca:0},
+  {t:'CATX',n:'Perspective Therapeutics',val:9.65,pnl:-3.53,sec:'Biotech',type:'spec',color:'#374151',dca:0},
+];
+const TOTAL_TR=POSITIONS.reduce((a,p)=>a+p.val,0);
+const TOTAL=TOTAL_TR+2000;
+
+// ══════════════════════════════
+// NAV
+// ══════════════════════════════
+const PAGES=['home','pos','proj','news','ai'];
+function go(id){
+  PAGES.forEach(p=>{
+    document.getElementById('pg-'+p).classList.toggle('active',p===id);
+    document.getElementById('nav-'+p).classList.toggle('active',p===id);
+  });
+  document.getElementById('pages').scrollTo({top:0,behavior:'instant'});
+  if(id==='ai'){setTimeout(()=>{const m=document.getElementById('chat-msgs');m.scrollTop=m.scrollHeight;},60);}
+  if(id==='proj'){setTimeout(()=>{buildProjData();drawProjChart();},80);}
+  if(id==='news'){renderNews();}
+}
+
+// ══════════════════════════════
+// POSITIONS
+// ══════════════════════════════
+function renderPositions(){
+  const cv=document.getElementById('conviction-cards');
+  const sp=document.getElementById('spec-cards');
+  const maxVal=Math.max(...POSITIONS.map(p=>p.val));
+  function card(p){
+    const pct=(p.val/TOTAL_TR*100).toFixed(1);
+    const barW=Math.round(p.val/maxVal*100);
+    return`<div class="pcard">
+      <div class="pcard-icon" style="background:${p.color}1e;color:${p.color}">${p.t.slice(0,4)}</div>
+      <div class="pcard-info">
+        <div class="pcard-name">${p.n}</div>
+        <div class="pcard-sec">${p.sec} · ${pct} %</div>
+        <div class="pcard-bar"><div class="pcard-bar-fill" style="width:${barW}%;background:${p.pnl>=0?'var(--g)':'var(--r)'}"></div></div>
+      </div>
+      <div class="pcard-right">
+        <div class="pcard-val">${p.val.toFixed(2)} €</div>
+        <div class="pcard-pnl ${p.pnl>=0?'pos':'neg'}">${p.pnl>0?'+':''}${p.pnl.toFixed(2)} %</div>
+        ${p.dca>0?`<div style="font-size:9px;color:var(--g);margin-top:2px">DCA ${p.dca} €</div>`:''}
+      </div>
+    </div>`;
+  }
+  cv.innerHTML=POSITIONS.filter(p=>p.type==='conviction').map(card).join('');
+  sp.innerHTML=POSITIONS.filter(p=>p.type==='spec').map(card).join('');
+}
+
+// ══════════════════════════════
+// ALLOC BAR
+// ══════════════════════════════
+function renderAlloc(){
+  const segs=[
+    {label:'ETF S&P 500',val:2000,color:'#4f8ef7'},
+    {label:'NOW',val:295.31,color:'#D97706'},
+    {label:'CRM',val:123.47,color:'#E07B39'},
+    {label:'PLTR',val:114.39,color:'#8B91A8'},
+    {label:'NVDA',val:94.69,color:'#7C3AED'},
+    {label:'AVGO',val:69.56,color:'#DC2626'},
+    {label:'Satellites',val:POSITIONS.filter(p=>p.type==='spec').reduce((a,p)=>a+p.val,0),color:'#374151'},
+  ];
+  document.getElementById('alloc-bar').innerHTML=segs.map(s=>`<div class="alloc-seg" style="width:${(s.val/TOTAL*100).toFixed(1)}%;background:${s.color}"></div>`).join('');
+  document.getElementById('alloc-legend').innerHTML=segs.map(s=>`<div class="alloc-item"><span class="alloc-dot" style="background:${s.color}"></span>${s.label} ${(s.val/TOTAL*100).toFixed(0)} %</div>`).join('');
+}
+
+// ══════════════════════════════
+// PERF CHART
+// ══════════════════════════════
+function drawPerfChart(){
+  const svg=document.getElementById('perf-svg');
+  if(!svg)return;
+  const W=svg.parentElement.clientWidth-32||320,H=130;
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const months=['J','F','M','A','M','J','Jl','A','S','O','N','D'];
+  const portData=[100,101.2,103.8,106.1,104.2,105.8,108.3,106.9,105.2,104.1,102.8,103.6];
+  const spData=[100,99.2,101.3,103.7,101.9,103.5,105.8,104.1,102.7,104.2,106.8,105.4];
+  const pad={t:10,r:10,b:25,l:28};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const allVals=[...portData,...spData];
+  const minV=Math.min(...allVals)-1,maxV=Math.max(...allVals)+1;
+  const x=i=>pad.l+i/(months.length-1)*cW;
+  const y=v=>pad.t+cH-(v-minV)/(maxV-minV)*cH;
+  let html='';
+  [0,.25,.5,.75,1].forEach(t=>{html+=`<line x1="${pad.l}" y1="${pad.t+cH*t}" x2="${W-pad.r}" y2="${pad.t+cH*t}" class="chart-grid"/>`;});
+  const spP=spData.map((v,i)=>`${i===0?'M':'L'}${x(i)},${y(v)}`).join(' ');
+  html+=`<path d="${spP} L${x(11)},${y(minV)} L${x(0)},${y(minV)} Z" fill="#4a5268" class="chart-area"/>`;
+  html+=`<path d="${spP}" class="chart-line" stroke="#4a5268" stroke-dasharray="4,3"/>`;
+  const pP=portData.map((v,i)=>`${i===0?'M':'L'}${x(i)},${y(v)}`).join(' ');
+  html+=`<path d="${pP} L${x(11)},${y(minV)} L${x(0)},${y(minV)} Z" fill="var(--acc)" class="chart-area"/>`;
+  html+=`<path d="${pP}" class="chart-line" stroke="var(--acc)"/>`;
+  months.forEach((m,i)=>{if(i%2===0)html+=`<text x="${x(i)}" y="${H-4}" class="chart-axis" text-anchor="middle">${m}</text>`;});
+  svg.innerHTML=html;
+}
+
+// ══════════════════════════════
+// PROJECTION ENGINE
+// ══════════════════════════════
+let currentRate=0.10,horizonMonths=240,projData=[];
+let chartW=0,chartH=190;
+const PAD={t:14,r:12,b:28,l:52};
+const START=2792,DCA=400;
+
+function monthsToLabel(m){
+  if(m<12)return m+'mois';
+  const y=Math.floor(m/12),r=m%12;
+  if(r===0)return y+(y>1?' ans':' an');
+  return y+'a '+r+'m';
+}
+function cmp(start,monthly,rate,months){
+  let v=start;const mr=rate/12;
+  for(let i=0;i<months;i++)v=v*(1+mr)+monthly;
+  return v;
+}
+function fmtEur(v){
+  if(v>=1000000)return(v/1000000).toFixed(2)+'M€';
+  if(v>=1000)return Math.round(v/1000)+'k€';
+  return Math.round(v)+'€';
+}
+function fmtFull(v){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);}
+function buildProjData(){
+  projData=[];const mr=currentRate/12;let v=START;
+  projData.push({m:0,val:v,inv:START});
+  for(let i=1;i<=horizonMonths;i++){v=v*(1+mr)+DCA;projData.push({m:i,val:v,inv:START+DCA*i});}
+}
+function drawProjChart(){
+  const svg=document.getElementById('proj-svg');
+  const zone=document.getElementById('chart-touch-zone');
+  if(!svg||!zone)return;
+  chartW=zone.clientWidth||300;chartH=190;
+  svg.setAttribute('height',chartH);svg.setAttribute('viewBox',`0 0 ${chartW} ${chartH}`);
+  buildProjData();
+  const cW=chartW-PAD.l-PAD.r,cH=chartH-PAD.t-PAD.b;
+  const maxV=projData[projData.length-1].val;
+  const step=Math.max(1,Math.floor(projData.length/120));
+  const pts=projData.filter((d,i)=>i%step===0||i===projData.length-1);
+  const px=d=>PAD.l+(d.m/horizonMonths)*cW;
+  const py=v=>PAD.t+cH-(v/maxV)*cH;
+  let html=`<defs><linearGradient id="capGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4f8ef7" stop-opacity="0.45"/><stop offset="85%" stop-color="#4f8ef7" stop-opacity="0.04"/></linearGradient></defs>`;
+  for(let i=0;i<=5;i++){
+    const frac=i/5,yy=PAD.t+cH*(1-frac),val=maxV*frac;
+    html+=`<line x1="${PAD.l}" y1="${yy.toFixed(1)}" x2="${chartW-PAD.r}" y2="${yy.toFixed(1)}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>`;
+    if(i>0)html+=`<text x="${PAD.l-4}" y="${(yy+3).toFixed(1)}" font-size="8" fill="#404868" text-anchor="end" font-family="-apple-system,sans-serif">${fmtEur(val)}</text>`;
+  }
+  if(horizonMonths<=12){for(let m=0;m<=horizonMonths;m++){const xp=PAD.l+(m/horizonMonths)*cW;html+=`<text x="${xp.toFixed(1)}" y="${chartH-4}" font-size="8" fill="#404868" text-anchor="middle" font-family="-apple-system,sans-serif">${m===0?'Auj.':m+'m'}</text>`;}}
+  else{const totalY=horizonMonths/12;const yStep=totalY<=5?1:totalY<=10?2:totalY<=20?5:10;for(let y=0;y<=totalY;y+=yStep){const xp=PAD.l+(y*12/horizonMonths)*cW;html+=`<text x="${xp.toFixed(1)}" y="${chartH-4}" font-size="8" fill="#404868" text-anchor="middle" font-family="-apple-system,sans-serif">${y===0?'Auj.':y+'a'}</text>`;}}
+  const invPts=pts.map((d,i)=>`${i===0?'M':'L'}${px(d).toFixed(1)},${py(d.inv).toFixed(1)}`).join(' ');
+  html+=`<path d="${invPts} L${(PAD.l+cW).toFixed(1)},${(PAD.t+cH).toFixed(1)} L${PAD.l},${(PAD.t+cH).toFixed(1)} Z" fill="rgba(74,82,104,0.18)"/>`;
+  html+=`<path d="${invPts}" fill="none" stroke="rgba(74,82,104,0.55)" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  const capPts=pts.map((d,i)=>`${i===0?'M':'L'}${px(d).toFixed(1)},${py(d.val).toFixed(1)}`).join(' ');
+  html+=`<path d="${capPts} L${(PAD.l+cW).toFixed(1)},${(PAD.t+cH).toFixed(1)} L${PAD.l},${(PAD.t+cH).toFixed(1)} Z" fill="url(#capGrad)"/>`;
+  html+=`<path d="${capPts}" fill="none" stroke="#4f8ef7" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const lp=pts[pts.length-1];
+  html+=`<circle cx="${px(lp).toFixed(1)}" cy="${py(lp.val).toFixed(1)}" r="4" fill="#4f8ef7" stroke="var(--bg)" stroke-width="2"/>`;
+  svg.innerHTML=html;
+  const cl=document.getElementById('cursor-line');
+  if(cl)cl.style.height=(chartH-PAD.b)+'px';
+  updateSummary();renderMilestones();renderProjTable();initChartInteraction();
+}
+function initChartInteraction(){
+  const zone=document.getElementById('chart-touch-zone');
+  if(!zone)return;
+  const cW=chartW-PAD.l-PAD.r,cH=chartH-PAD.t-PAD.b;
+  const maxV=projData[projData.length-1].val;
+  function showAt(clientX){
+    const cl=document.getElementById('cursor-line'),cd=document.getElementById('cursor-dot');
+    if(!cl||!cd)return;
+    const rect=zone.getBoundingClientRect();
+    const xRel=Math.max(0,Math.min(clientX-rect.left-PAD.l,cW));
+    const idx=Math.round((xRel/cW)*horizonMonths);
+    const d=projData[Math.max(0,Math.min(idx,projData.length-1))];
+    const snapFrac=d.m/horizonMonths;
+    const xPx=PAD.l+snapFrac*cW;
+    const yPx=PAD.t+cH-(d.val/maxV)*cH;
+    cl.style.left=xPx+'px';cl.style.top=PAD.t+'px';cl.style.height=cH+'px';cl.style.opacity='1';
+    cd.style.left=xPx+'px';cd.style.top=yPx+'px';cd.style.opacity='1';
+    const mfr=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+    const now=new Date();
+    const td=new Date(now.getFullYear(),now.getMonth()+d.m,1);
+    document.getElementById('tt-date').textContent=d.m===0?"Aujourd'hui":`${mfr[td.getMonth()]} ${td.getFullYear()} · ${monthsToLabel(d.m)}`;
+    document.getElementById('tt-val').textContent=fmtFull(d.val);
+    document.getElementById('tt-inv').textContent=`Investi : ${fmtFull(d.inv)} · Gains : ${fmtFull(d.val-d.inv)}`;
+  }
+  function hide(){
+    const cl=document.getElementById('cursor-line'),cd=document.getElementById('cursor-dot');
+    if(cl)cl.style.opacity='0';if(cd)cd.style.opacity='0';
+    document.getElementById('tt-date').textContent='Glisse sur le graphique';
+    document.getElementById('tt-val').textContent='';document.getElementById('tt-inv').textContent='';
+  }
+  if(!zone.dataset.bound){
+    zone.dataset.bound='1';
+    let lastIdx=-1;
+    function handleMove(clientX){
+      const rect=zone.getBoundingClientRect();
+      const xRel=Math.max(0,Math.min(clientX-rect.left-PAD.l,cW));
+      const idx=Math.round((xRel/cW)*horizonMonths);
+      if(idx!==lastIdx){lastIdx=idx;if(navigator.vibrate)navigator.vibrate(2);}
+      window._chartShowAt(clientX);
+    }
+    zone.addEventListener('touchstart',e=>{e.preventDefault();handleMove(e.touches[0].clientX);},{passive:false});
+    zone.addEventListener('touchmove',e=>{e.preventDefault();handleMove(e.touches[0].clientX);},{passive:false});
+    zone.addEventListener('touchend',()=>setTimeout(()=>window._chartHide(),2500),{passive:true});
+    zone.addEventListener('mousemove',e=>handleMove(e.clientX));
+    zone.addEventListener('mouseleave',()=>window._chartHide());
+  }
+  window._chartShowAt=showAt;window._chartHide=hide;
+}
+function updateSummary(){
+  const final=projData[projData.length-1];
+  const gains=final.val-final.inv;
+  document.getElementById('sum-final').textContent=fmtFull(final.val);
+  document.getElementById('sum-gains').textContent=fmtFull(gains);
+  document.getElementById('sum-years').textContent=`dans ${monthsToLabel(horizonMonths)}`;
+  document.getElementById('sum-mult').textContent=`×${(final.val/final.inv).toFixed(1)} l'investi`;
+}
+function onSlider(v){
+  horizonMonths=parseInt(v);
+  document.getElementById('slider-label').textContent=monthsToLabel(horizonMonths);
+  drawProjChart();
+}
+function setScenario(btn,rate){
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');currentRate=rate;drawProjChart();
+}
+function renderMilestones(){
+  const el=document.getElementById('milestones');if(!el)return;
+  let ms=[];
+  if(horizonMonths<=12){[1,3,6,12].forEach(m=>{if(m<=horizonMonths)ms.push(m);});}
+  else{[12,60,120,240,360,480].forEach(m=>{if(m<=horizonMonths)ms.push(m);});}
+  if(!ms.includes(horizonMonths))ms.push(horizonMonths);
+  el.innerHTML=ms.map(m=>{
+    const v=cmp(START,DCA,currentRate,m),inv=START+DCA*m,gains=v-inv;
+    return`<div class="milestone"><div class="ms-year">Dans ${monthsToLabel(m)} · Investi : ${fmtFull(inv)}</div><div class="ms-vals"><div class="ms-base">${fmtFull(v)}</div><div class="ms-range">+${fmtFull(gains)} · ×${(v/inv).toFixed(1)}</div></div></div>`;
+  }).join('');
+}
+function renderProjTable(){
+  const el=document.getElementById('proj-table');if(!el)return;
+  let pts=[],colHeader='Période';
+  if(horizonMonths<=12){for(let m=1;m<=horizonMonths;m++)pts.push(m);colHeader='Mois';}
+  else if(horizonMonths<=60){for(let m=3;m<=horizonMonths;m+=3)pts.push(m);if(!pts.includes(horizonMonths))pts.push(horizonMonths);}
+  else{const totalY=Math.floor(horizonMonths/12);const yStep=totalY<=20?1:2;for(let y=1;y<=totalY;y+=yStep)pts.push(y*12);if(!pts.includes(horizonMonths))pts.push(horizonMonths);colHeader='Année';}
+  el.innerHTML=`<div style="display:grid;grid-template-columns:64px 1fr 1fr;font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;padding:4px 0 8px"><div>${colHeader}</div><div style="text-align:right">Capital</div><div style="text-align:right">Gains</div></div>`
+  +pts.map(m=>{
+    const v=cmp(START,DCA,currentRate,m),inv=START+DCA*m,gains=v-inv,isLast=m===horizonMonths;
+    const pLabel=horizonMonths<=12?(m+'m'):(m%12===0?(m/12+'a'):monthsToLabel(m));
+    return`<div style="display:grid;grid-template-columns:64px 1fr 1fr;padding:7px 0;border-top:1px solid var(--b1);${isLast?'font-weight:700':''}"><div style="font-size:11px;color:${isLast?'var(--t1)':'var(--t2)'}">${pLabel}</div><div style="text-align:right;font-size:11px;color:${isLast?'var(--g)':'var(--t1)'}">${fmtFull(v)}</div><div style="text-align:right;font-size:11px;color:${isLast?'var(--acc)':'var(--t3)'}">${isLast?'+':'+'}${fmtEur(gains)}</div></div>`;
+  }).join('');
+}
+
+// ══════════════════════════════
+// NEWS & EVENTS
+// ══════════════════════════════
+const EVENTS=[
+  {id:'nvda-q2',title:"NVIDIA Q2 FY27 — Résultats trimestriels",tickers:['NVDA'],icon:'💎',cls:'ev-b',macro:'Datacenter · Vera Rubin · Blackwell',body:"Revenus attendus ~80-85 Mds$ après Q1 FY27 record à 75,2 Mds$. L'orientation Vera Rubin et les marges seront scrutées.",importance:3,impact:'Impact fort NVDA + secteur semi',impactCls:'imp-pos',ts:new Date('2026-08-27T21:00:00Z').getTime()},
+  {id:'now-q2',title:"ServiceNow Q2 2026 — Résultats trimestriels",tickers:['NOW'],icon:'📋',cls:'ev-g',macro:'Entreprise SaaS · Now Assist',body:"Après un Q1 solide (+22% rev.), le marché surveille la progression de Now Assist vers l'objectif de 1 Mds$ d'ACV et l'accélération des agents IA.",importance:3,impact:'Impact direct NOW (ta plus grosse ligne)',impactCls:'imp-pos',ts:new Date('2026-07-22T20:30:00Z').getTime()},
+  {id:'fomc-jul',title:"FED — Décision taux directeurs FOMC",tickers:['NVDA','NOW','CRM','PLTR'],icon:'🏦',cls:'ev-a',macro:'Macro · Taux · Dollar',body:"La Fed se réunit. Un statu quo est attendu. Toute surprise (hausse ou signal dovish) impacte les multiples de valorisation des tech de croissance.",importance:2,impact:"Volatilité sur l'ensemble des positions",impactCls:'imp-neg',ts:new Date('2026-07-29T18:00:00Z').getTime()},
+  {id:'crm-q2',title:"Salesforce Q2 FY27 — Résultats",tickers:['CRM'],icon:'☁️',cls:'ev-g',macro:'CRM · Agentforce',body:"La trajectoire d'Agentforce ARR (1,2 Mds$) sera le point focal. Si la croissance accélère au-delà de 200% YoY, le cours pourrait rebondir fortement.",importance:3,impact:'Potentiel rebond sur CRM (−17,7%)',impactCls:'imp-pos',ts:new Date('2026-08-26T20:30:00Z').getTime()},
+];
+const NEWS=[
+  {title:"NVIDIA dépasse 75 Mds$ de revenus trimestriels — +92% YoY. Jensen Huang : « La demande est parabolique »",time:"20 mai 2026",tickers:['NVDA'],tag:"Résultats",tagColor:'#1fc87a',barColor:'var(--g)'},
+  {title:"Palantir : Rule of 40 à 145% — Q1 2026 +85% de croissance, la plus forte depuis l'IPO",time:"4 mai 2026",tickers:['PLTR'],tag:"Résultats",tagColor:'#1fc87a',barColor:'var(--g)'},
+  {title:"Broadcom : revenus IA Q2 +143% à 10,8 Mds$, Q3 guidé +200% à 16 Mds$",time:"3 juin 2026",tickers:['AVGO'],tag:"Résultats",tagColor:'#1fc87a',barColor:'var(--g)'},
+  {title:"ServiceNow relève ses prévisions FY26 après Q1 solide — Now Assist vise 1 Mds$ d'ACV",time:"22 avr. 2026",tickers:['NOW'],tag:"Guidance",tagColor:'#f5a623',barColor:'var(--a)'},
+  {title:"Salesforce : Agentforce ARR dépasse 1,2 Mds$ (+205%) — La thèse IA se valide",time:"27 mai 2026",tickers:['CRM'],tag:"Positif",tagColor:'#1fc87a',barColor:'var(--g)'},
+];
+function fmtCountdown(ts){
+  const diff=ts-Date.now();
+  if(diff<=0)return`<span style="font-size:11px;color:var(--t3)">Passé</span>`;
+  const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+  if(d>30)return`<span style="font-size:12px;color:var(--t2)">Dans ${d} jours</span>`;
+  return`<div class="cd"><div class="cd-seg"><div class="cd-n">${String(d).padStart(2,'0')}</div><div class="cd-l">j</div></div><div class="cd-sep">:</div><div class="cd-seg"><div class="cd-n">${String(h).padStart(2,'0')}</div><div class="cd-l">h</div></div><div class="cd-sep">:</div><div class="cd-seg"><div class="cd-n">${String(m).padStart(2,'0')}</div><div class="cd-l">m</div></div><div class="cd-sep">:</div><div class="cd-seg"><div class="cd-n">${String(s).padStart(2,'0')}</div><div class="cd-l">s</div></div></div>`;
+}
+function impBadge(n){
+  const dots=[1,2,3].map(i=>`<div class="imp-dot" style="background:${i<=n?'currentColor':'rgba(255,255,255,.2)'}"></div>`).join('');
+  const cls=n===3?'imp-high':n===2?'imp-med':'imp-low';
+  return`<div class="imp-badge ${cls}"><div class="imp-dots">${dots}</div>${n===3?'Critique':n===2?'Modéré':'Mineur'}</div>`;
+}
+function renderNews(){
+  const sorted=[...EVENTS].sort((a,b)=>a.ts-b.ts);
+  const nec=document.getElementById('next-event-card');
+  if(nec&&sorted.length){
+    const ev=sorted[0];
+    nec.innerHTML=`<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--acc);margin-bottom:8px">⚡ Prochain événement</div>
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <div class="event-icon ${ev.cls}" style="flex-shrink:0">${ev.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:var(--t1);margin-bottom:4px">${ev.title}</div>
+        <div class="event-tickers">${ev.tickers.map(t=>`<span class="ev-tkr">${t}</span>`).join('')}</div>
+        <div id="cd-next" style="margin-top:8px">${fmtCountdown(ev.ts)}</div>
+      </div>
+    </div>`;
+  }
+  const el=document.getElementById('events-list');
+  if(el)el.innerHTML=EVENTS.map(ev=>`<div class="event-card"><div class="event-head"><div class="event-icon ${ev.cls}">${ev.icon}</div><div style="flex:1;min-width:0"><div class="event-title">${ev.title}</div><div class="event-tickers">${ev.tickers.map(t=>`<span class="ev-tkr">${t}</span>`).join('')}</div><div style="font-size:10px;color:var(--t3)">${ev.macro}</div></div>${impBadge(ev.importance)}</div><div class="event-body">${ev.body}</div><div class="event-foot"><span style="font-size:11px;font-weight:600;${ev.impactCls==='imp-pos'?'color:var(--g)':ev.impactCls==='imp-neg'?'color:var(--r)':'color:var(--t3)'}">${ev.impact}</span><div id="cd-${ev.id}">${fmtCountdown(ev.ts)}</div></div></div>`).join('');
+  const nl=document.getElementById('news-list');
+  if(nl)nl.innerHTML=NEWS.map(n=>`<div class="news-item"><div class="news-impact-bar" style="background:${n.barColor}"></div><div class="news-content"><div class="news-title">${n.title}</div><div class="news-meta"><span class="news-time">${n.time}</span>${n.tickers.map(t=>`<span class="news-tkr">${t}</span>`).join(' ')}<span class="news-tag" style="background:${n.tagColor}22;color:${n.tagColor}">${n.tag}</span></div></div></div>`).join('');
+}
+function updateEventCountdowns(){
+  if(!document.getElementById('pg-news').classList.contains('active'))return;
+  EVENTS.forEach(ev=>{const el=document.getElementById('cd-'+ev.id);if(el)el.innerHTML=fmtCountdown(ev.ts);});
+  const cdNext=document.getElementById('cd-next');if(cdNext)cdNext.innerHTML=fmtCountdown([...EVENTS].sort((a,b)=>a.ts-b.ts)[0].ts);
+}
+setInterval(updateEventCountdowns,1000);
+
+// ══════════════════════════════
+// CLOCK
+// ══════════════════════════════
+function tick(){const el=document.getElementById('clock-top');if(el)el.textContent=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}
+setInterval(tick,10000);tick();
+
+// ══════════════════════════════
+// AI ANALYST
+// ══════════════════════════════
+const SYS=`Tu es l'analyste personnel d'Enzo, 20 ans, investisseur long terme.
+Portefeuille RÉEL (juin 2026) :
+- ServiceNow (NOW) : 295,31€ · −15,63% depuis achat
+- Salesforce (CRM) : 123,47€ · −17,68%
+- Palantir (PLTR) : 114,39€ · +3,99%
+- NVIDIA (NVDA) : 94,69€ · −0,33%
+- Broadcom (AVGO) : 69,56€ · −0,63%
+- Annovis Bio : 30,40€ · −4,04% [satellite spéculatif]
+- Microvast : 21,80€ · +9,02% [satellite]
+- BioRestorative : 20,50€ · +2,50% [satellite]
+- Avalo Therapeutics : 12,46€ · −1,42% [satellite]
+- Perspective Therapeutics : 9,65€ · −3,53% [satellite]
+Total Trade Republic : 792€. ETF S&P 500 séparé : 2000€. TOTAL : 2792€. DCA : 400€/mois. Horizon : 20 ans.
+Réponds en français. Direct, humain, honnête. Expose risques et opportunités clairement. Pas de rapport corporate.`;
+
+async function callAI(q){
+  try{
+    const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:800,tools:[{"type":"web_search_20250305","name":"web_search"}],system:SYS,messages:[{role:"user",content:q}]})});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    let txt='',searched=false;
+    if(d.content){for(const b of d.content){if(b.type==='text')txt+=b.text;if(b.type==='tool_use'&&b.name==='web_search')searched=true;}}
+    if(!txt.trim())throw new Error('empty');
+    txt=txt.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+    if(searched)txt+='<br><br><span style="font-size:9px;color:var(--t3)">🔍 Données web actualisées</span>';
+    return txt;
+  }catch(e){return fallback(q);}
+}
+function fallback(q){
+  const l=q.toLowerCase();
+  if(/400|mensuel|mois|où|allouer/.test(l))return`Ce mois-ci avec 400 € :<br><br><strong>NVDA 90 €</strong> — ta position la plus sous-pondérée par rapport à sa conviction.<br><strong>AVGO 60 €</strong> — profil défensif + dividende croissant, idéal pour rééquilibrer.<br><strong>NOW 50 €</strong> — drawdown −15,6 % sans rupture fondamentale = opportunité.<br><strong>CRM 40 €</strong> — Agentforce valide la thèse, le cours ne le reflète pas encore.<br><strong>ETF S&P 500 120 €</strong> — toujours prioritaire, c'est le moteur principal.<br><strong>PLTR 0 €</strong> — ta seule position en profit, déjà bien dimensionnée à 114 €.<br><br>Satellites → 0 €. Pas de renforcement, jamais.`;
+  if(/servicenow|now|tiens/.test(l))return`ServiceNow à −15,6 % depuis ton achat.<br><br>La thèse est-elle cassée ou juste le prix ?<br><br>Thèse intacte : NRR 98 %, +22 % de revenus, Now Assist vise 1 Mds$ d'ACV. <strong>Rien n'a fondamentalement changé.</strong><br><br>Ce qui a changé : la croissance est passée de 26 % à 22 % YoY. Le marché punit le ralentissement marginal avec excès.<br><br><span class="hi-g">Verdict : tu tiens, et tu renforces à 50 €/mois.</span>`;
+  if(/nvda|nvidia|avgo|broadcom/.test(l))return`NVDA vs AVGO :<br><br><strong>NVDA :</strong> 94 € dans ton portef. — très sous-pondéré. Q1 FY27 : 75,2 Mds$ de revenus +92%. CUDA moat irréplicable. <span class="hi-g">Priorité #1.</span><br><br><strong>AVGO :</strong> 69 € — semi IA +143% + VMware récurrent + dividende 10 %/an. Plus défensif, complémentaire.<br><br>Ce mois : <strong>NVDA 90 €, AVGO 60 €.</strong>`;
+  if(/small|satellite|vend|annovis|microvast|biore|avalo|perspective/.test(l))return`Ces 5 satellites représentent 94 € au total — 3,3 % de ton patrimoine.<br><br><span class="hi-r">La réalité :</span> ce sont des paris binaires sur des boîtes sans revenus commerciaux. Probabilité de survie : inférieure à 50 % pour certaines.<br><br><span class="hi-g">La bonne nouvelle :</span> même si tout tombe à zéro = −3,3 % du portef. total. Négligeable.<br><br><strong>Ma réponse :</strong> ne vends pas dans la panique (tu cristalliserais la perte). Ne renforce jamais. Laisse courir. Chaque euro nouveau va aux convictions.`;
+  if(/20 ans|proj|capital|combien/.test(l))return`400 €/mois, 20 ans, depuis 2 792 € :<br><br><strong>Base 10 %/an : <span class="hi-g">~330 000 €</span></strong><br>Bull 14 %/an : ~640 000 €<br>Bear 7 %/an : ~185 000 €<br><br>Tu verses 96 000 € de ta poche. Les intérêts composés génèrent 234 000 € supplémentaires en base.<br><br>Le secret : <strong>les 5 dernières années font plus de la moitié du chemin.</strong> Arrêter à 15 ans coûterait 145 000 € de gains.`;
+  if(/palantir|pltr/.test(l))return`Palantir +3,99 % — ta seule position vraiment verte.<br><br>Q1 2026 : +85 % de revenus, Rule of 40 à 145 %, US commercial +133 %. <span class="hi-g">Les fondamentaux sont exceptionnels.</span><br><br><span class="hi-r">Le problème :</span> la valorisation est extrême (~94x EV/EBITDA). Le moindre raté = −20-30 % instantané. Le marché punit même les bonnes nouvelles.<br><br><strong>Mon avis :</strong> tu tiens, DCA à 0 €. Laisse courir sans renforcer.`;
+  return`Portef. réel : 2 792 € total, 10 positions, DCA 400 €/mois. 7 en perte latente sur fondamentaux intacts (NOW, CRM), 3 en profit. Pose une question spécifique.`;
+}
+async function send(){
+  const inp=document.getElementById('chat-inp');
+  const q=inp.value.trim();if(!q)return;
+  inp.value='';inp.style.height='auto';
+  addMsg(q,'user');
+  const t=addTyping();
+  document.getElementById('send-btn').disabled=true;
+  try{const r=await callAI(q);t.remove();addMsg(r,'ai');}
+  catch(e){t.remove();addMsg('Connexion indisponible. Réessaie.','ai');}
+  finally{document.getElementById('send-btn').disabled=false;}
+}
+function sq(el){document.getElementById('chat-inp').value=el.textContent;send();go('ai');}
+function hk(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function addMsg(c,r='ai'){
+  const msgs=document.getElementById('chat-msgs');
+  const d=document.createElement('div');
+  d.className='cmsg'+(r==='user'?' user':'');
+  d.innerHTML=`<div class="av ${r==='user'?'av-u':'av-ai'}">${r==='user'?'E':'AI'}</div><div class="bubble${r==='user'?' user':''}">${c}</div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+function addTyping(){
+  const msgs=document.getElementById('chat-msgs');
+  const d=document.createElement('div');d.className='cmsg';d.id='typing';
+  d.innerHTML=`<div class="av av-ai">AI</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d;
+}
+document.getElementById('chat-inp').addEventListener('input',function(){this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';});
+
+// ══════════════════════════════
+// INIT + SPLASH
+// ══════════════════════════════
+window.addEventListener('DOMContentLoaded',()=>{
+  renderPositions();
+  renderAlloc();
+  drawPerfChart();
+  // Splash → fade out
+  setTimeout(()=>{
+    const s=document.getElementById('splash');
+    if(s){s.style.transition='opacity .5s';s.style.opacity='0';setTimeout(()=>s.remove(),500);}
+  },1800);
+});
+</script>
+</body>
+</html>
